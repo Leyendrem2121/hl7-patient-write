@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Registro y Agendamiento de Paciente</title>
     <style>
         /* Estilos básicos para una mejor presentación del formulario */
@@ -35,12 +35,12 @@
         input[type="tel"],
         input[type="date"],
         select {
-            width: calc(100% - 24px); /* Ancho completo con padding */
+            width: calc(100% - 24px);
             padding: 12px;
             margin-bottom: 20px;
             border: 1px solid #ccc;
             border-radius: 5px;
-            box-sizing: border-box; /* Incluye padding y border en el ancho */
+            box-sizing: border-box;
             font-size: 16px;
         }
         button {
@@ -51,7 +51,6 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 18px;
-            display: block; /* Para que ocupe todo el ancho si quieres */
             width: 100%;
             transition: background-color 0.3s ease;
         }
@@ -81,10 +80,10 @@
     <h1>Registro y Agendamiento de Paciente</h1>
     <form id="patientForm">
         <label for="name">Nombres:</label>
-        <input type="text" id="name" name="name" placeholder="Ej: Juan Andrés" required><br><br>
+        <input type="text" id="name" name="name" placeholder="Ej: Juan Andrés" required />
 
         <label for="familyName">Apellidos:</label>
-        <input type="text" id="familyName" name="familyName" placeholder="Ej: Pérez García" required><br><br>
+        <input type="text" id="familyName" name="familyName" placeholder="Ej: Pérez García" required />
 
         <label for="gender">Género:</label>
         <select id="gender" name="gender" required>
@@ -93,10 +92,10 @@
             <option value="female">Femenino</option>
             <option value="other">Otro</option>
             <option value="unknown">Prefiero no decir / Desconocido</option>
-        </select><br><br>
+        </select>
 
         <label for="birthDate">Fecha de Nacimiento:</label>
-        <input type="date" id="birthDate" name="birthDate" required><br><br>
+        <input type="date" id="birthDate" name="birthDate" required />
 
         <label for="identifierSystem">Tipo de Documento de Identidad:</label>
         <select id="identifierSystem" name="identifierSystem" required>
@@ -105,31 +104,45 @@
             <option value="http://terminology.hl7.org/CodeSystem/v2-0203|PPN">Pasaporte</option>
             <option value="http://terminology.hl7.org/CodeSystem/v2-0203|DL">Licencia de Conducir</option>
             <option value="http://terminology.hl7.org/CodeSystem/v2-0203|BRN">Registro de Negocio (Para empresas o EPS)</option>
-            </select><br><br>
+        </select>
 
         <label for="identifierValue">Número de Documento:</label>
-        <input type="text" id="identifierValue" name="identifierValue" placeholder="Ej: 1234567890" required><br><br>
+        <input type="text" id="identifierValue" name="identifierValue" placeholder="Ej: 1234567890" required />
 
         <label for="cellPhone">Teléfono Celular:</label>
-        <input type="tel" id="cellPhone" name="cellPhone" placeholder="Ej: 3001234567" pattern="[0-9]{7,10}" title="Ingresa un número de teléfono válido (7 a 10 dígitos)" required><br><br>
+        <input
+            type="tel"
+            id="cellPhone"
+            name="cellPhone"
+            placeholder="Ej: 3001234567"
+            pattern="[0-9]{7,10}"
+            title="Ingresa un número de teléfono válido (7 a 10 dígitos)"
+            required
+        />
 
         <label for="email">Correo Electrónico:</label>
-        <input type="email" id="email" name="email" placeholder="Ej: correo@example.com" required><br><br>
+        <input type="email" id="email" name="email" placeholder="Ej: correo@example.com" required />
 
         <label for="address">Dirección de Residencia:</label>
-        <input type="text" id="address" name="address" placeholder="Ej: Calle 10 # 5-20" required><br><br>
-
-        <label for="city">Ciudad:</label>
-        <input type="text" id="city" name="city" placeholder="Ej: Bogotá" required><br><br>
-
-        <label for="state">Departamento/Estado:</label>
-        <input type="text" id="state" name="state" placeholder="Ej: Cundinamarca" required><br><br>
-
-        <label for="postalCode">Código Postal (Opcional):</label>
-        <input type="text" id="postalCode" name="postalCode" placeholder="Ej: 110111"><br><br>
+        <input type="text" id="address" name="address" placeholder="Ej: Calle 10 # 5-20" required />
 
         <label for="country">País:</label>
-        <input type="text" id="country" name="country" value="COL" placeholder="Ej: Colombia" required><br><br>
+        <select id="country" name="country" required>
+            <option value="">-- Selecciona un país --</option>
+        </select>
+
+        <label for="state">Departamento/Estado:</label>
+        <select id="state" name="state" required disabled>
+            <option value="">-- Selecciona un departamento --</option>
+        </select>
+
+        <label for="city">Ciudad:</label>
+        <select id="city" name="city" required disabled>
+            <option value="">-- Selecciona una ciudad --</option>
+        </select>
+
+        <label for="postalCode">Código Postal (Opcional):</label>
+        <input type="text" id="postalCode" name="postalCode" placeholder="Ej: 110111" />
 
         <button type="submit">Registrar Paciente y Agendar</button>
     </form>
