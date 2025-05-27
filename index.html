@@ -1,154 +1,40 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Registro y Agendamiento de Paciente</title>
-    <style>
-        /* Estilos básicos para una mejor presentación del formulario */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f4f4f4;
-            color: #333;
-        }
-        h1 {
-            color: #0056b3;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        form {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
-            margin: auto;
-        }
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-        }
-        input[type="text"],
-        input[type="email"],
-        input[type="tel"],
-        input[type="date"],
-        select {
-            width: calc(100% - 24px);
-            padding: 12px;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-            font-size: 16px;
-        }
-        button {
-            background-color: #007bff;
-            color: white;
-            padding: 12px 25px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 18px;
-            width: 100%;
-            transition: background-color 0.3s ease;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        #responseMessage {
-            margin-top: 25px;
-            padding: 15px;
-            border-radius: 5px;
-            text-align: center;
-            font-weight: bold;
-        }
-        .success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        .error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Registro de Pacientes FHIR</title>
+  <link rel="stylesheet" href="style.css"> <!-- opcional -->
 </head>
 <body>
-    <h1>Registro y Agendamiento de Paciente</h1>
-    <form id="patientForm">
-        <label for="name">Nombres:</label>
-        <input type="text" id="name" name="name" placeholder="Ej: Juan Andrés" required />
+  <h1>Formulario de Registro de Pacientes</h1>
 
-        <label for="familyName">Apellidos:</label>
-        <input type="text" id="familyName" name="familyName" placeholder="Ej: Pérez García" required />
+  <form id="patientForm">
+    <input type="text" name="identifier" placeholder="Número de documento" required>
+    <input type="text" name="firstName" placeholder="Nombre" required>
+    <input type="text" name="lastName" placeholder="Apellido" required>
+    <input type="tel" name="phone" placeholder="Teléfono" required>
+    <input type="email" name="email" placeholder="Correo" required>
+    <input type="date" name="birthDate" required>
 
-        <label for="gender">Género:</label>
-        <select id="gender" name="gender" required>
-            <option value="">-- Selecciona una opción --</option>
-            <option value="male">Masculino</option>
-            <option value="female">Femenino</option>
-            <option value="other">Otro</option>
-            <option value="unknown">Prefiero no decir / Desconocido</option>
-        </select>
+    <select name="gender" required>
+      <option value="">-- Género --</option>
+      <option value="male">Masculino</option>
+      <option value="female">Femenino</option>
+      <option value="other">Otro</option>
+    </select>
 
-        <label for="birthDate">Fecha de Nacimiento:</label>
-        <input type="date" id="birthDate" name="birthDate" required />
+    <input type="text" name="address" placeholder="Dirección" required>
+    <select id="country" name="country" required></select>
+    <select id="state" name="state" required disabled></select>
+    <select id="city" name="city" required disabled></select>
+    <input type="text" name="postalCode" placeholder="Código Postal" required>
 
-        <label for="identifierSystem">Tipo de Documento de Identidad:</label>
-        <select id="identifierSystem" name="identifierSystem" required>
-            <option value="">-- Selecciona una opción --</option>
-            <option value="http://terminology.hl7.org/CodeSystem/v2-0203|ID">Cédula de Ciudadanía</option>
-            <option value="http://terminology.hl7.org/CodeSystem/v2-0203|PPN">Pasaporte</option>
-            <option value="http://terminology.hl7.org/CodeSystem/v2-0203|DL">Licencia de Conducir</option>
-            <option value="http://terminology.hl7.org/CodeSystem/v2-0203|BRN">Registro de Negocio (Para empresas o EPS)</option>
-        </select>
+    <button type="submit">Registrar Paciente</button>
+  </form>
 
-        <label for="identifierValue">Número de Documento:</label>
-        <input type="text" id="identifierValue" name="identifierValue" placeholder="Ej: 1234567890" required />
+  <div id="responseMessage"></div>
 
-        <label for="cellPhone">Teléfono Celular:</label>
-        <input
-            type="tel"
-            id="cellPhone"
-            name="cellPhone"
-            placeholder="Ej: 3001234567"
-            pattern="[0-9]{7,10}"
-            title="Ingresa un número de teléfono válido (7 a 10 dígitos)"
-            required
-        />
-
-        <label for="email">Correo Electrónico:</label>
-        <input type="email" id="email" name="email" placeholder="Ej: correo@example.com" required />
-
-        <label for="address">Dirección de Residencia:</label>
-        <input type="text" id="address" name="address" placeholder="Ej: Calle 10 # 5-20" required />
-
-        <label for="country">País:</label>
-        <select id="country" name="country" required>
-            <option value="">-- Selecciona un país --</option>
-        </select>
-
-        <label for="state">Departamento/Estado:</label>
-        <select id="state" name="state" required disabled>
-            <option value="">-- Selecciona un departamento --</option>
-        </select>
-
-        <label for="city">Ciudad:</label>
-        <select id="city" name="city" required disabled>
-            <option value="">-- Selecciona una ciudad --</option>
-        </select>
-
-        <label for="postalCode">Código Postal (Opcional):</label>
-        <input type="text" id="postalCode" name="postalCode" placeholder="Ej: 110111" />
-
-        <button type="submit">Registrar Paciente y Agendar</button>
-    </form>
-
-    <div id="responseMessage"></div>
-
-    <script src="app.js"></script>
+  <!-- Este es el JS donde va toda la lógica -->
+  <script src="app.js"></script>
 </body>
 </html>
