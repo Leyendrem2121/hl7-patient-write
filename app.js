@@ -7,23 +7,15 @@ document.addEventListener('DOMContentLoaded', function () {
         COL: {
             name: "Colombia",
             states: {
-                "Cundinamarca": ["Bogotá", "Soacha", "Chía", "Zipaquirá"],
-                "Antioquia": ["Medellín", "Envigado", "Bello", "Itagüí"],
-                "Valle del Cauca": ["Cali", "Palmira", "Buenaventura", "Tuluá"]
-            }
-        },
-        MEX: {
-            name: "México",
-            states: {
-                "Jalisco": ["Guadalajara", "Zapopan", "Tlaquepaque"],
-                "Ciudad de México": ["Coyoacán", "Tlalpan", "Xochimilco"],
-                "Nuevo León": ["Monterrey", "San Nicolás", "Guadalupe"]
+                "Cundinamarca": ["Bogotá", "Soacha", "Chía"],
+                "Antioquia": ["Medellín", "Envigado"],
+                "Valle del Cauca": ["Cali", "Palmira"]
             }
         }
     };
 
     function populateCountries() {
-        countrySelect.innerHTML = '<option value="">-- Selecciona un país --</option>';
+        countrySelect.innerHTML = '<option value="">-- País --</option>';
         for (const code in data) {
             const option = document.createElement('option');
             option.value = code;
@@ -33,8 +25,8 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function populateStates(countryCode) {
-        stateSelect.innerHTML = '<option value="">-- Selecciona un departamento --</option>';
-        citySelect.innerHTML = '<option value="">-- Selecciona una ciudad --</option>';
+        stateSelect.innerHTML = '<option value="">-- Departamento --</option>';
+        citySelect.innerHTML = '<option value="">-- Ciudad --</option>';
         citySelect.disabled = true;
 
         if (!countryCode || !data[countryCode]) {
@@ -53,15 +45,14 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function populateCities(countryCode, stateName) {
-        citySelect.innerHTML = '<option value="">-- Selecciona una ciudad --</option>';
+        citySelect.innerHTML = '<option value="">-- Ciudad --</option>';
 
         if (!countryCode || !stateName || !data[countryCode]?.states[stateName]) {
             citySelect.disabled = true;
             return;
         }
 
-        const cities = data[countryCode].states[stateName];
-        cities.forEach(city => {
+        data[countryCode].states[stateName].forEach(city => {
             const option = document.createElement('option');
             option.value = city;
             option.textContent = city;
@@ -72,35 +63,65 @@ document.addEventListener('DOMContentLoaded', function () {
 
     countrySelect.addEventListener('change', () => {
         populateStates(countrySelect.value);
-        citySelect.innerHTML = '<option value="">-- Selecciona una ciudad --</option>';
-        citySelect.disabled = true;
     });
 
     stateSelect.addEventListener('change', () => {
         populateCities(countrySelect.value, stateSelect.value);
     });
 
-    // Inicialización
     populateCountries();
-    countrySelect.value = 'COL';
-    populateStates('COL');
 
-    // Envío del formulario al backend
     document.getElementById('patientForm').addEventListener('submit', async function (e) {
         e.preventDefault();
-
         const formData = new FormData(e.target);
-        const dataToSend = {};
 
-        formData.forEach((value, key) => {
-            dataToSend[key] = value;
-        });
+        const patientFHIR = {
+            resourceType: "Patient",
+            identifier: [{
+                use: "official",
+                type: {
+                    coding: [{
+                        system: "http://terminology.hl7.org/CodeSystem/v2-0203",
+                        code: "ID"
+                    }],
+                    text: "Cédula de Ciudadanía"
+                },
+                value: formData.get("identifier")
+            }],
+            name: [{
+                use: "official",
+                family: formData.get("lastName"),
+                given: [formData.get("firstName")]
+            }],
+            telecom: [
+                {
+                    system: "phone",
+                    value: formData.get("phone"),
+                    use: "mobile"
+                },
+                {
+                    system: "email",
+                    value: formData.get("email"),
+                    use: "home"
+                }
+            ],
+            gender: formData.get("gender"),
+            birthDate: formData.get("birthDate"),
+            address: [{
+                use: "home",
+                line: [formData.get("address")],
+                city: formData.get("city"),
+                state: formData.get("state"),
+                postalCode: formData.get("postalCode"),
+                country: formData.get("country")
+            }]
+        };
 
         try {
             const response = await fetch('https://hl7-fhir-ehr-brayan12345.onrender.com', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(dataToSend)
+                body: JSON.stringify(patientFHIR)
             });
 
             const result = await response.json();
