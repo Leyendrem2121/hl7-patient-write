@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         try {
-            const response = await fetch('https://hl7-fhir-ehr-brayan12345.onrender.com/patients', {
+            const response = await fetch('https://hl7-fhir-ehr-brayan12345.onrender.com', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
