@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         try {
-            const response = await fetch('https://hl7-fhir-ehr-brayan12345.onrender.com', {
+            const response = await fetch('https://hl7-fhir-ehr-brayan12345.onrender.com/patients', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -111,6 +111,9 @@ document.addEventListener('DOMContentLoaded', function () {
             if (response.ok) {
                 messageBox.textContent = 'Paciente registrado exitosamente.';
                 messageBox.className = 'success';
+                e.target.reset();  // Opcional: limpiar el formulario
+                citySelect.disabled = true;
+                stateSelect.disabled = true;
             } else {
                 messageBox.textContent = `Error: ${result.detail || 'No se pudo registrar el paciente.'}`;
                 messageBox.className = 'error';
@@ -123,3 +126,4 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
+
