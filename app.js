@@ -1,26 +1,18 @@
-// Espera a que el DOM esté completamente cargado antes de añadir el event listener
 document.addEventListener('DOMContentLoaded', function() {
-    // Obtiene una referencia al formulario y al div de mensajes
     const patientForm = document.getElementById('patientForm');
     const responseMessageDiv = document.getElementById('responseMessage');
 
-    // Función para mostrar mensajes al usuario
     function showMessage(message, type) {
         responseMessageDiv.textContent = message;
-        responseMessageDiv.className = ''; // Limpia clases anteriores
-        responseMessageDiv.classList.add(type); // Añade clase 'success' o 'error'
-        responseMessageDiv.style.display = 'block'; // Asegura que el div sea visible
+        responseMessageDiv.className = '';
+        responseMessageDiv.classList.add(type);
+        responseMessageDiv.style.display = 'block';
     }
 
-    // Añade un event listener para el evento 'submit' del formulario
     patientForm.addEventListener('submit', async function(event) {
-        // Previene el comportamiento por defecto del formulario (recargar la página)
         event.preventDefault();
-
-        // Oculta cualquier mensaje anterior
         responseMessageDiv.style.display = 'none';
 
-        // Obtener los valores del formulario
         const name = document.getElementById('name').value;
         const familyName = document.getElementById('familyName').value;
         const gender = document.getElementById('gender').value;
@@ -31,79 +23,70 @@ document.addEventListener('DOMContentLoaded', function() {
         const email = document.getElementById('email').value;
         const addressLine = document.getElementById('address').value;
         const city = document.getElementById('city').value;
-        const state = document.getElementById('state').value; // Nuevo campo
+        const state = document.getElementById('state').value;
         const postalCode = document.getElementById('postalCode').value;
-        const country = document.getElementById('country').value; // Nuevo campo
+        const country = document.getElementById('country').value;
 
-        // Parsear el sistema y el código del identificador (ej: "http://system|code")
+        // Separar sistema y código del identificador
         const [identifierSystem, identifierCode] = identifierSystemValue.split('|');
 
-        // Generar un ID simple para el recurso Patient (en un sistema real, el backend podría generarlo)
         const patientFhirId = `patient-${Date.now()}`;
 
-        // Crear el objeto Patient en formato HL7 FHIR
         const patientFhirResource = {
             resourceType: "Patient",
-            id: patientFhirId, // ID del recurso FHIR
-            active: true, // El paciente está activo
+            id: patientFhirId,
+            active: true,
             identifier: [{
-                use: "official", // Uso oficial del identificador
+                use: "official",
                 type: {
                     coding: [{
-                        system: identifierSystem, // Sistema de codificación del identificador
-                        code: identifierCode // Código del identificador (ej: 'ID' para cédula)
+                        system: identifierSystem,
+                        code: identifierCode
                     }]
                 },
-                value: identifierValue // Valor del identificador (ej: el número de cédula)
+                value: identifierValue
             }],
             name: [{
-                use: "official", // Uso oficial del nombre
-                given: [name], // Nombres
-                family: familyName // Apellidos
+                use: "official",
+                given: [name],
+                family: familyName
             }],
             telecom: [
                 {
                     system: "phone",
                     value: cellPhone,
-                    use: "mobile" // Uso móvil para el teléfono celular
+                    use: "mobile"
                 },
                 {
                     system: "email",
                     value: email,
-                    use: "home" // Uso personal para el correo electrónico
+                    use: "home"
                 }
             ],
             gender: gender,
             birthDate: birthDate,
             address: [{
-                use: "home", // Uso de la dirección (domicilio)
-                line: [addressLine], // Línea de dirección
+                use: "home",
+                line: [addressLine],
                 city: city,
-                state: state, // Estado/Departamento
+                state: state,
                 postalCode: postalCode,
-                country: country // País
+                country: country
             }]
-            // Aquí podrías añadir más extensiones o campos FHIR si fueran necesarios
-            // para el agendamiento o la recolección de muestras, como se vio en el ejemplo anterior
         };
 
         console.log("Datos FHIR a enviar:", JSON.stringify(patientFhirResource, null, 2));
 
         try {
-            // Enviar los datos usando Fetch API a tu backend
-            // IMPORTANTE: Reemplaza esta URL con la URL real de tu backend
-            const backendUrl = 'https://hl7-fhir-ehr-brayan12345.onrender.com/patients'; // Sugerencia: añadir un endpoint /patients
-            
+            const backendUrl = 'https://hl7-fhir-ehr-brayan12345.onrender.com/patients';
+
             const response = await fetch(backendUrl, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(patientFhirResource)
             });
 
             if (!response.ok) {
-                // Si la respuesta no es OK (ej. 400, 500), lanzar un error
                 const errorData = await response.json();
                 throw new Error(errorData.message || `Error del servidor: ${response.status}`);
             }
@@ -111,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = await response.json();
             console.log('Success:', data);
             showMessage('Paciente registrado exitosamente! ID: ' + (data.insertedId || patientFhirId), 'success');
-            patientForm.reset(); // Limpiar el formulario después del éxito
+            patientForm.reset();
 
         } catch (error) {
             console.error('Error al enviar datos:', error);
