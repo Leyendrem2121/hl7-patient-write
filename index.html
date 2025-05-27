@@ -1,40 +1,165 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Registro de Pacientes FHIR</title>
-  <link rel="stylesheet" href="style.css"> <!-- opcional -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema LIS - Agendamiento de Citas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5; /* Fondo gris claro */
+        }
+    </style>
 </head>
-<body>
-  <h1>Formulario de Registro de Pacientes</h1>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+    <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-2xl border border-gray-200">
+        <h1 class="text-3xl font-bold text-center text-blue-700 mb-6">Agendar Cita - Laboratorio LIS</h1>
+        <p class="text-center text-gray-600 mb-8">Por favor, complete el siguiente formulario para agendar su cita de toma de muestra o reclamo de resultados.</p>
 
-  <form id="patientForm">
-    <input type="text" name="identifier" placeholder="Número de documento" required>
-    <input type="text" name="firstName" placeholder="Nombre" required>
-    <input type="text" name="lastName" placeholder="Apellido" required>
-    <input type="tel" name="phone" placeholder="Teléfono" required>
-    <input type="email" name="email" placeholder="Correo" required>
-    <input type="date" name="birthDate" required>
+        <form id="appointmentForm" class="space-y-6">
+            <div class="bg-blue-50 p-4 rounded-md border border-blue-200">
+                <h2 class="text-xl font-semibold text-blue-600 mb-4">Datos del Paciente</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="tipoIdentificacion" class="block text-sm font-medium text-gray-700 mb-1">Tipo de Identificación</label>
+                        <select id="tipoIdentificacion" name="tipoIdentificacion" required
+                                class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                            <option value="">Seleccione...</option>
+                            <option value="CC">Cédula de Ciudadanía</option>
+                            <option value="TI">Tarjeta de Identidad</option>
+                            <option value="Pasaporte">Pasaporte</option>
+                            <option value="CE">Cédula de Extranjería</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="numeroIdentificacion" class="block text-sm font-medium text-gray-700 mb-1">Número de Identificación</label>
+                        <input type="text" id="numeroIdentificacion" name="numeroIdentificacion" required
+                               class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                               placeholder="Ej: 1234567890">
+                    </div>
+                </div>
 
-    <select name="gender" required>
-      <option value="">-- Género --</option>
-      <option value="male">Masculino</option>
-      <option value="female">Femenino</option>
-      <option value="other">Otro</option>
-    </select>
+                <div class="mt-4">
+                    <label for="nombreCompleto" class="block text-sm font-medium text-gray-700 mb-1">Nombre Completo</label>
+                    <input type="text" id="nombreCompleto" name="nombreCompleto" required
+                           class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                           placeholder="Ej: Juan Pérez García">
+                </div>
 
-    <input type="text" name="address" placeholder="Dirección" required>
-    <select id="country" name="country" required></select>
-    <select id="state" name="state" required disabled></select>
-    <select id="city" name="city" required disabled></select>
-    <input type="text" name="postalCode" placeholder="Código Postal" required>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    <div>
+                        <label for="fechaNacimiento" class="block text-sm font-medium text-gray-700 mb-1">Fecha de Nacimiento</label>
+                        <input type="date" id="fechaNacimiento" name="fechaNacimiento" required
+                               class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                    </div>
+                    <div>
+                        <label for="genero" class="block text-sm font-medium text-gray-700 mb-1">Género</label>
+                        <select id="genero" name="genero"
+                                class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                            <option value="">Seleccione...</option>
+                            <option value="Masculino">Masculino</option>
+                            <option value="Femenino">Femenino</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                    </div>
+                </div>
 
-    <button type="submit">Registrar Paciente</button>
-  </form>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    <div>
+                        <label for="telefono" class="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
+                        <input type="tel" id="telefono" name="telefono"
+                               class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                               placeholder="Ej: +573001234567">
+                    </div>
+                    <div>
+                        <label for="correoElectronico" class="block text-sm font-medium text-gray-700 mb-1">Correo Electrónico</label>
+                        <input type="email" id="correoElectronico" name="correoElectronico" required
+                               class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                               placeholder="Ej: juan.perez@example.com">
+                    </div>
+                </div>
 
-  <div id="responseMessage"></div>
+                <div class="mt-4">
+                    <label for="direccion" class="block text-sm font-medium text-gray-700 mb-1">Dirección de Residencia</label>
+                    <input type="text" id="direccion" name="direccion"
+                           class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                           placeholder="Ej: Calle 10 # 20-30">
+                </div>
 
-  <!-- Este es el JS donde va toda la lógica -->
-  <script src="app.js"></script>
+                <div class="mt-4">
+                    <label for="epsAseguradora" class="block text-sm font-medium text-gray-700 mb-1">EPS / Aseguradora (Opcional)</label>
+                    <input type="text" id="epsAseguradora" name="epsAseguradora"
+                           class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                           placeholder="Ej: SURA EPS">
+                </div>
+            </div>
+
+            <div class="bg-green-50 p-4 rounded-md border border-green-200">
+                <h2 class="text-xl font-semibold text-green-600 mb-4">Detalles de la Cita</h2>
+                <div>
+                    <label for="tipoServicio" class="block text-sm font-medium text-gray-700 mb-1">Tipo de Servicio</label>
+                    <select id="tipoServicio" name="tipoServicio" required
+                            class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm">
+                        <option value="">Seleccione...</option>
+                        <option value="Toma de Muestra">Toma de Muestra</option>
+                        <option value="Reclamo de Resultados">Reclamo de Resultados</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    <div>
+                        <label for="fechaCita" class="block text-sm font-medium text-gray-700 mb-1">Fecha de la Cita</label>
+                        <input type="date" id="fechaCita" name="fechaCita" required
+                               class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm">
+                    </div>
+                    <div>
+                        <label for="horaCita" class="block text-sm font-medium text-gray-700 mb-1">Hora de la Cita</label>
+                        <input type="time" id="horaCita" name="horaCita" required
+                               class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm">
+                    </div>
+                </div>
+
+                <div id="examenesSection" class="mt-4 hidden">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Exámenes Solicitados (Seleccione uno o más)</label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div class="flex items-center">
+                            <input type="checkbox" id="examenHemograma" name="examenes" value="Hemograma Completo" class="h-4 w-4 text-blue-600 border-gray-300 rounded">
+                            <label for="examenHemograma" class="ml-2 block text-sm text-gray-900">Hemograma Completo</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="examenGlicemia" name="examenes" value="Glicemia en Ayunas" class="h-4 w-4 text-blue-600 border-gray-300 rounded">
+                            <label for="examenGlicemia" class="ml-2 block text-sm text-gray-900">Glicemia en Ayunas</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="examenPerfilLipidico" name="examenes" value="Perfil Lipídico" class="h-4 w-4 text-blue-600 border-gray-300 rounded">
+                            <label for="examenPerfilLipidico" class="ml-2 block text-sm text-gray-900">Perfil Lipídico</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="examenUroanalisis" name="examenes" value="Uroanálisis" class="h-4 w-4 text-blue-600 border-gray-300 rounded">
+                            <label for="examenUroanalisis" class="ml-2 block text-sm text-gray-900">Uroanálisis</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <label for="notasPaciente" class="block text-sm font-medium text-gray-700 mb-1">Notas Adicionales (Opcional)</label>
+                    <textarea id="notasPaciente" name="notasPaciente" rows="3"
+                              class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 sm:text-sm"
+                              placeholder="Ej: Requiere atención especial, tiene alergias a ciertos medicamentos, etc."></textarea>
+                </div>
+            </div>
+
+            <button type="submit"
+                    class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out">
+                Agendar Cita
+            </button>
+        </form>
+
+        <div id="messageArea" class="mt-6 p-4 rounded-md text-center hidden">
+            </div>
+    </div>
+
+    <script src="app.js"></script>
 </body>
 </html>
